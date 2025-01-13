@@ -105,6 +105,7 @@ const int offset = 127;      // Offset for PWM (centered at 127)
 const int pin = 9;           // PWM pin
 
 void setup() {
+    Serial.begin(9600);
     pinMode(pin, OUTPUT);
 }
 
@@ -116,6 +117,8 @@ void loop() {
         lastTime = millis();
         float value = amplitude * sin(angle) + offset; // Sine wave formula
         analogWrite(pin, (int)value);                 // Output as PWM
+        Serial.print("Value: ");
+        Serial.println(value);
         angle += 2 * PI * frequency / 1000.0;         // Increment angle
         if (angle > 2 * PI) angle -= 2 * PI;          // Keep angle in range
     }
