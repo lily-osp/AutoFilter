@@ -26,17 +26,25 @@ float AutoFilter::quadratureAmplitudeModulation(float iSignal, float qSignal, fl
     return (iSignal * cos(carrier) - qSignal * sin(carrier));
 }
 
-// PWM
+// Pulse Width Modulation (PWM)
+void AutoFilter::pulseWidthModulation(int pin, float dutyCycle, int pwmFrequency) {
+    dutyCycle = constrain(dutyCycle, 0.0, 1.0); // Ensure duty cycle is between 0 and 1
 
-void AutoFilter::pulseWidthModulation(int pin, float dutyCycle, int frequency) {
-    if (pin != pwmPin) {
-        pinMode(pin, OUTPUT);
-        pwmPin = pin;
-    }
-    pwmFrequency = frequency;
-    int pwmValue = (int)(dutyCycle * 255);
+    #if defined(ESP32)
+    // ESP32-specific PWM setup
+    int channel = 0; // Use channel 0
+    ledcSetup(channel, pwmFrequency, 8); // Set frequency and 8-bit resolution
+    ledcAttachPin(pin, channel);
+    ledcWrite(channel, (int)(dutyCycle * 255)); // Set duty cycle (0-255)
+    #elif defined(TEENSYDUINO)
+    // Teensy-specific PWM setup
     analogWriteFrequency(pin, pwmFrequency);
-    analogWrite(pin, pwmValue);
+    analogWrite(pin, (int)(dutyCycle * 255)); // Set duty cycle
+    #else
+    // Boards without frequency control
+    Serial.println("Warning: Custom PWM frequency not supported on this board.");
+    analogWrite(pin, (int)(dutyCycle * 255)); // Default analogWrite behavior
+    #endif
 }
 
 void AutoFilter::dualPulseWidthModulation(int pin1, int pin2, float dutyCycle, int frequency, int phaseShift) {

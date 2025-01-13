@@ -16,7 +16,8 @@ public:
     float quadratureAmplitudeModulation(float iSignal, float qSignal, float carrier);
 
     // PWM
-    void pulseWidthModulation(int pin, float dutyCycle, int frequency);
+    // void pulseWidthModulation(int pin, float dutyCycle, int frequency);
+    void pulseWidthModulation(int pin, float dutyCycle, int pwmFrequency);
     void dualPulseWidthModulation(int pin1, int pin2, float dutyCycle, int frequency, int phaseShift);
 
     // Filtering Methods
